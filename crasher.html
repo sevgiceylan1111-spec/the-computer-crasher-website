@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GLITCH_SYSTEM</title>
+    <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/></svg>">
+    
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            background: #000; color: #fff;
+            font-family: 'Courier New', monospace;
+            height: 100vh; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Glitch Background Overlay */
+        #glitch-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.05);
+            z-index: 1; pointer-events: none;
+            display: none; animation: flash 0.05s infinite;
+        }
+
+        /* Geometric Glitch Container */
+        .box-container {
+            position: relative; z-index: 2;
+            width: 300px; height: 300px;
+            border: 4px solid #fff;
+            overflow: hidden;
+        }
+
+        .box-container::before, .box-container::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0.7;
+            animation: shift 0.1s infinite;
+        }
+
+        .box-container::after {
+            background: #555; animation-delay: 0.05s;
+        }
+
+        @keyframes shift {
+            0% { clip-path: polygon(0% 0%, 100% 0%, 100% 20%, 0% 150%); transform: translate(-5px); }
+            50% { clip-path: polygon(20% 40%, 80% 0%, 100% 100%, 0% 80%); transform: translate(10px); }
+            100% { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); transform: translate(-2px); }
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
+        }
+
+        button {
+            margin-top: 30px; z-index: 3;
+            padding: 15px 40px; font-size: 1.2rem;
+            background: #fff; border: none; cursor: pointer;
+            font-weight: bold; text-transform: uppercase;
+        }
+
+        button:hover { background: #ff0000; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="glitch-bg"></div>
+
+    <div class="box-container"></div>
+    
+    <button onclick="start()">Initiate Chaos</button>
+
+    <script>
+        const words = ["ERROR", "VOID", "NULL", "SYSTEM", "BREACH", "FATAL", "DATA", "LOST", "CORRUPT", "SIGNAL", "0x00F", "CRITICAL"];
+        let active = false;
+
+        async function start() {
+            if (active) return;
+            active = true;
+
+            // Visual Effects
+            document.getElementById('glitch-bg').style.display = 'block';
+            
+            // 1. Favicon Glitch (Changes icon color 20 times per second)
+            const fav = document.getElementById('favicon');
+            setInterval(() => {
+                const color = Math.random() > 0.5 ? 'white' : 'black';
+                fav.href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='${color}'/></svg>`;
+            }, 50);
+
+            // 2. Request Notifications
+            const permission = await Notification.requestPermission();
+
+            if (permission === 'granted') {
+                // Sends random word notifications (1-10 words) every 2 seconds
+                setInterval(() => {
+                    let msgCount = Math.floor(Math.random() * 10) + 1;
+                    let content = "";
+                    for(let i=0; i<msgCount; i++) {
+                        content += words[Math.floor(Math.random() * words.length)] + " ";
+                    }
+
+                    new Notification("ALERT", { 
+                        body: content.trim(),
+                        silent: true 
+                    });
+                }, 2000);
+            }
+
+            // 3. Popup (Attempt to open a secondary tab)
+            window.open(window.location.href, '_blank', 'width=300,height=300');
+        }
+    </script>
+</body>
+</html>
