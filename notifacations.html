@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VOID_FEED</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body { background: #000; overflow: hidden; }
+        
+        /* Full Screen Glitch Effect */
+        #glitch {
+            position: fixed; width: 100vw; height: 100vh;
+            background: #fff; z-index: 1; display: none;
+            animation: pulse 0.04s infinite;
+        }
+
+        @keyframes pulse {
+            0% { background: #fff; clip-path: inset(0 0 0 0); }
+            50% { background: #000; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); }
+            100% { background: #555; clip-path: polygon(0 45%, 100% 2%, 88% 100%, 12% 80%); }
+        }
+
+        #btn-wrap {
+            position: relative; z-index: 10; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+        button { 
+            padding: 40px; font-size: 1.5rem; font-family: 'Courier New', monospace;
+            background: #000; color: #fff; border: 3px solid #fff; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="glitch"></div>
+    <div id="btn-wrap"><button onclick="chaos()">START NOTIF_SPAM</button></div>
+
+    <script>
+        const lexicon = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST", "0xFF", "STACK", "CORRUPT", "OVERFLOW"];
+
+        async function chaos() {
+            document.getElementById('btn-wrap').style.display = 'none';
+            document.getElementById('glitch').style.display = 'block';
+
+            const permission = await Notification.requestPermission();
+            
+            if (permission === 'granted') {
+                // Sending a burst of text (1-10 words) every second
+                setInterval(() => {
+                    let wordCount = Math.floor(Math.random() * 10) + 1;
+                    let sentence = "";
+                    for(let i=0; i < wordCount; i++) {
+                        sentence += lexicon[Math.floor(Math.random() * lexicon.length)] + " ";
+                    }
+
+                    new Notification("!", { 
+                        body: sentence.trim(),
+                        silent: true // Prevents audio stuttering
+                    });
+                }, 1000); 
+            }
+        }
+    </script>
+</body>
+</html>
