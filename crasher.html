@@ -1,47 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>REPLICATION_CORE_v2</title>
-    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
-    
+    <title>REPLICATION_CORE</title>
+    <link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
-        body { 
-            background: #000; color: #fff; font-family: 'Courier New', monospace; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            height: 100vh; margin: 0; text-align: center;
-        }
-        .container { border: 2px solid #fff; padding: 60px; box-shadow: 0 0 30px #ff0000; }
-        h1 { font-size: 3rem; margin-bottom: 10px; }
-        button { 
-            padding: 25px 50px; font-size: 1.5rem; background: #fff; color: #000; 
-            border: none; font-weight: bold; cursor: pointer; transition: 0.1s;
-        }
-        button:hover { background: #ff0000; color: #fff; transform: scale(1.1); }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; text-align: center; }
+        .box { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 20px #fff; }
+        button { padding: 20px 40px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
+        button:hover { background: red; color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>SYSTEM OVERRIDE</h1>
-        <p>PROTOCOL: TAB_STORM_INITIATED</p>
-        <button onclick="ignite()">EXECUTE REPLICATION</button>
+    <div class="box">
+        <h1>SYSTEM READY</h1>
+        <button onclick="start()">IGNITE</button>
     </div>
 
     <script>
-        function ignite() {
-            // 1. Start the Favicon/Icon Glitch (15 times per second)
-            const fav = document.getElementById('icon');
+        function start() {
+            // Icon Glitch
             setInterval(() => {
                 const p = () => Math.floor(Math.random() * 100);
-                const color = Math.random() > 0.5 ? "white" : "red";
-                fav.href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='${color}'/></svg>`;
-            }, 70);
+                document.getElementById('fav').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
+            }, 60);
 
-            // 2. The Spammer Loop
-            // This pulls directly from your GitHub so it always "connects"
+            // This line uses './' which means "look in the current folder"
             setInterval(() => {
-                window.open('https://sevgiceylan1111-spec.github.io/the-computer-crasher-website/notifacations.html', '_blank', 'width=500,height=500');
-            }, 250); 
+                window.open('./notifacations.html', '_blank', 'width=400,height=400');
+            }, 300);
         }
     </script>
 </body>
