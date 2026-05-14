@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>REPLICATION_CORE</title>
-    <link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    <title>MASTER_CONTROL</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Courier New', monospace; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; text-align: center; }
-        .box { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 20px #fff; }
-        button { padding: 20px 40px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
-        button:hover { background: red; color: #fff; }
+        body { background: #000; color: #fff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .ui { border: 1px solid #fff; padding: 40px; text-align: center; }
+        button { padding: 20px; background: #fff; cursor: pointer; font-weight: bold; border: none; }
     </style>
 </head>
 <body>
-
-    <div class="box">
+    <div class="ui">
         <h1>SYSTEM READY</h1>
-        <button onclick="start()">IGNITE</button>
+        <button onclick="ignite()">SPAWN RANDOM GLITCH</button>
     </div>
 
     <script>
-        function start() {
-            // Icon Glitch
+        function ignite() {
+            // Opens the second file every 400ms
             setInterval(() => {
-                const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('fav').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-            }, 60);
-
-            // This line uses './' which means "look in the current folder"
-            setInterval(() => {
-                window.open('./notifacations.html', '_blank', 'width=400,height=400');
-            }, 300);
+                // Random position for the new window
+                const w = 400; const h = 400;
+                const x = Math.random() * (window.screen.width - w);
+                const y = Math.random() * (window.screen.height - h);
+                
+                window.open('./notifacations.html', '_blank', `width=${w},height=${h},left=${x},top=${y}`);
+            }, 400);
         }
     </script>
 </body>
