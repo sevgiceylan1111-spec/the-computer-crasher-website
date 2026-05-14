@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER</title>
+    <title>MASTER_CONTROL</title>
+    <style>
+        body { background: #000; color: #fff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        button { padding: 30px; background: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 1.5rem; }
+        button:hover { background: #ff0000; color: #fff; }
+    </style>
 </head>
-<body style="background:#000; color:#fff; text-align:center;">
-    <h1>SYSTEM READY</h1>
-    <button onclick="ignite()" style="padding:20px;">SPAWN WINDOWS</button>
+<body>
+    <button onclick="ignite()">SPAWN RANDOM CHAOS</button>
 
     <script>
         function ignite() {
-            // This tells the browser: "Look in the exact same folder I am in"
             setInterval(() => {
-                window.open('notifacations.html', '_blank', 'width=400,height=400');
+                // Calculate random screen position
+                const w = 400; 
+                const h = 400;
+                const x = Math.floor(Math.random() * (window.screen.availWidth - w));
+                const y = Math.floor(Math.random() * (window.screen.availHeight - h));
+                
+                // Open the file with specific coordinates
+                window.open('notifacations.html', '_blank', `width=${w},height=${h},left=${x},top=${y},menubar=no,status=no`);
             }, 500);
         }
     </script>
