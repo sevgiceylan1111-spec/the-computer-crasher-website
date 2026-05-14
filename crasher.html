@@ -1,30 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER_CONTROL</title>
-    <style>
-        body { background: #000; color: #fff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .ui { border: 1px solid #fff; padding: 40px; text-align: center; }
-        button { padding: 20px; background: #fff; cursor: pointer; font-weight: bold; border: none; }
-    </style>
+    <title>MASTER</title>
 </head>
-<body>
-    <div class="ui">
-        <h1>SYSTEM READY</h1>
-        <button onclick="ignite()">SPAWN RANDOM GLITCH</button>
-    </div>
+<body style="background:#000; color:#fff; text-align:center;">
+    <h1>SYSTEM READY</h1>
+    <button onclick="ignite()" style="padding:20px;">SPAWN WINDOWS</button>
 
     <script>
         function ignite() {
-            // Opens the second file every 400ms
+            // This tells the browser: "Look in the exact same folder I am in"
             setInterval(() => {
-                // Random position for the new window
-                const w = 400; const h = 400;
-                const x = Math.random() * (window.screen.width - w);
-                const y = Math.random() * (window.screen.height - h);
-                
-                window.open('./notifacations.html', '_blank', `width=${w},height=${h},left=${x},top=${y}`);
-            }, 400);
+                window.open('notifacations.html', '_blank', 'width=400,height=400');
+            }, 500);
         }
     </script>
 </body>
