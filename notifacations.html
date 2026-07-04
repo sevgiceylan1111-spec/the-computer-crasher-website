@@ -26,24 +26,30 @@
             box-shadow: 0 0 20px #ff0000;
             font-weight: bold;
             font-size: 14px;
-            width: 280px;
-            z-index: 9999;
-            pointer-events: none; /* Prevents clicks from slowing it down */
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
         }
         .title-bar {
             background: #ff0000;
             color: #000;
             padding: 2px 6px;
-            margin: -8px -8px 8px -8px;
             font-size: 11px;
             letter-spacing: 1px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
+    <div class="mandela-box">
+        <div class="title-bar">✖ CRITICAL ERROR</div>
+        <div id="payload-text">INITIALIZING MANDELA.EXE...</div>
+    </div>
+
     <script>
-        // Classic Mandela.exe inspired aesthetic lines
         const payloads = [
             "SYSTEM CORRUPTION DETECTED",
             "MANDELA.EXE HAS TAKEN CONTROL",
@@ -52,43 +58,36 @@
             "SYSTEM FAILURE IMMINENT",
             "CRITICAL_ERROR: VOID_DETECTED",
             "THERE IS NOT ENOUGH ROOM FOR BOTH OF US",
-            "AN UNKNOWN ENTITY IS TRACKING YOUR PATH",
-            "RECEIVING INBOUND DATA FROM [UNKNOWN]"
+            "AN UNKNOWN ENTITY IS TRACKING YOUR PATH"
         ];
 
-        // Cache window dimensions for speed optimization
-        let wWidth = window.innerWidth;
-        let wHeight = window.innerHeight;
+        // Randomize the initial text inside the window
+        document.getElementById('payload-text').innerText = payloads[Math.floor(Math.random() * payloads.length)];
 
-        // Update dimensions if window resizes
-        window.onresize = () => {
-            wWidth = window.innerWidth;
-            wHeight = window.innerHeight;
-        };
+        // DVD Bouncing Movement Settings (999x Speed Simulation)
+        // High step values mean the window jumps huge distances per tick
+        let moveX = Math.random() > 0.5 ? 25 : -25; 
+        let moveY = Math.random() > 0.5 ? 25 : -25;
 
-        function unleashPayload() {
-            // High-speed DOM element generation
-            const box = document.createElement('div');
-            box.className = 'mandela-box';
-            
-            const text = payloads[Math.floor(Math.random() * payloads.length)];
-            box.innerHTML = `<div class="title-bar">✖ CRITICAL ERROR</div>` + text;
+        function bounceWindow() {
+            // Move the window itself across the operating system desktop
+            window.moveBy(moveX, moveY);
 
-            // Hyper-randomized placement
-            const x = Math.random() * (wWidth - 290);
-            const y = Math.random() * (wHeight - 100);
-            box.style.left = x + 'px';
-            box.style.top = y + 'px';
+            // Detect if the window hits the edge of the user's monitor/screen
+            if (window.screenX <= 0 || (window.screenX + window.outerWidth) >= window.screen.availWidth) {
+                moveX = -moveX; // Reverse horizontal direction
+            }
+            if (window.screenY <= 0 || (window.screenY + window.outerHeight) >= window.screen.availHeight) {
+                moveY = -moveY; // Reverse vertical direction
+            }
 
-            document.body.appendChild(box);
-
-            // Fast strobe background glitch
-            document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(0, 0, 0)' || document.body.style.backgroundColor === '') ? '#1a0000' : '#000000';
+            // High-speed strobe background glitch inside the window
+            document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(0, 0, 0)' || document.body.style.backgroundColor === '') ? '#2a0000' : '#000000';
         }
 
-        // Set interval to 1 millisecond for ultra-fast spawning
         window.onload = function() {
-            setInterval(unleashPayload, 1);
+            // Run at a 1ms interval for maximum execution velocity
+            setInterval(bounceWindow, 1);
         };
     </script>
 </body>
