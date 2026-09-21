@@ -1,94 +1,145 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>⚠️ SYSTEM CRITICAL ⚠️</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            background-color: #000;
-            color: #ff0000;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            width: 100vw;
-            height: 100vh;
-        }
-        .mandela-box {
-            position: absolute;
-            background: #050505;
-            border: 3px double #ff0000;
-            padding: 8px;
-            box-shadow: 0 0 20px #ff0000;
-            font-weight: bold;
-            font-size: 14px;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-        }
-        .title-bar {
-            background: #ff0000;
-            color: #000;
-            padding: 2px 6px;
-            font-size: 11px;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>⚠️ SYSTEM CRITICAL ⚠️</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    background:#000;
+    color:#ff0000;
+    font-family:"Courier New",Courier,monospace;
+    user-select:none;
+}
+
+#stage{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+}
+
+.mandela-box{
+    position:absolute;
+    width:320px;
+    min-height:145px;
+    padding:8px;
+    background:#050505;
+    border:3px double #ff0000;
+    box-shadow:0 0 20px #ff0000;
+    font-weight:bold;
+    font-size:14px;
+    will-change:transform;
+}
+
+.title-bar{
+    background:#ff0000;
+    color:#000;
+    padding:3px 6px;
+    font-size:11px;
+    letter-spacing:1px;
+    margin-bottom:10px;
+}
+
+#payload-text{
+    line-height:1.5;
+}
+
+.flash{
+    animation:flash .16s infinite alternate;
+}
+
+@keyframes flash{
+    from{
+        background:#050505;
+        box-shadow:0 0 20px #ff0000;
+    }
+    to{
+        background:#260000;
+        box-shadow:0 0 45px #ff0000;
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="mandela-box">
+<div id="stage">
+    <div class="mandela-box flash" id="box">
         <div class="title-bar">✖ CRITICAL ERROR</div>
         <div id="payload-text">INITIALIZING MANDELA.EXE...</div>
     </div>
+</div>
 
-    <script>
-        const payloads = [
-            "SYSTEM CORRUPTION DETECTED",
-            "MANDELA.EXE HAS TAKEN CONTROL",
-            "DO NOT LOOK BEHIND YOU",
-            "YOUR FILES ARE NO LONGER YOURS",
-            "SYSTEM FAILURE IMMINENT",
-            "CRITICAL_ERROR: VOID_DETECTED",
-            "THERE IS NOT ENOUGH ROOM FOR BOTH OF US",
-            "AN UNKNOWN ENTITY IS TRACKING YOUR PATH"
-        ];
+<script>
+const payloads = [
+    "SYSTEM CORRUPTION DETECTED",
+    "MANDELA.EXE HAS TAKEN CONTROL",
+    "DO NOT LOOK BEHIND YOU",
+    "YOUR FILES ARE NO LONGER YOURS",
+    "SYSTEM FAILURE IMMINENT",
+    "CRITICAL_ERROR: VOID_DETECTED",
+    "THERE IS NOT ENOUGH ROOM FOR BOTH OF US",
+    "AN UNKNOWN ENTITY IS TRACKING YOUR PATH"
+];
 
-        // Randomize the initial text inside the window
-        document.getElementById('payload-text').innerText = payloads[Math.floor(Math.random() * payloads.length)];
+const box = document.getElementById("box");
+const text = document.getElementById("payload-text");
 
-        // DVD Bouncing Movement Settings (999x Speed Simulation)
-        // High step values mean the window jumps huge distances per tick
-        let moveX = Math.random() > 0.5 ? 25 : -25; 
-        let moveY = Math.random() > 0.5 ? 25 : -25;
+text.textContent =
+    payloads[Math.floor(Math.random() * payloads.length)];
 
-        function bounceWindow() {
-            // Move the window itself across the operating system desktop
-            window.moveBy(moveX, moveY);
+let x = Math.random() * 300;
+let y = Math.random() * 200;
 
-            // Detect if the window hits the edge of the user's monitor/screen
-            if (window.screenX <= 0 || (window.screenX + window.outerWidth) >= window.screen.availWidth) {
-                moveX = -moveX; // Reverse horizontal direction
-            }
-            if (window.screenY <= 0 || (window.screenY + window.outerHeight) >= window.screen.availHeight) {
-                moveY = -moveY; // Reverse vertical direction
-            }
+let vx = 5;
+let vy = 4;
 
-            // High-speed strobe background glitch inside the window
-            document.body.style.backgroundColor = (document.body.style.backgroundColor === 'rgb(0, 0, 0)' || document.body.style.backgroundColor === '') ? '#2a0000' : '#000000';
-        }
+function animate(){
+    const maxX = window.innerWidth - box.offsetWidth;
+    const maxY = window.innerHeight - box.offsetHeight;
 
-        window.onload = function() {
-            // Run at a 1ms interval for maximum execution velocity
-            setInterval(bounceWindow, 1);
-        };
-    </script>
+    x += vx;
+    y += vy;
+
+    if(x <= 0 || x >= maxX){
+        vx *= -1;
+        x = Math.max(0,Math.min(x,maxX));
+    }
+
+    if(y <= 0 || y >= maxY){
+        vy *= -1;
+        y = Math.max(0,Math.min(y,maxY));
+    }
+
+    box.style.transform =
+        `translate3d(${x}px,${y}px,0)`;
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+/* Change the warning occasionally */
+setInterval(()=>{
+    text.textContent =
+        payloads[Math.floor(Math.random() * payloads.length)];
+},1200);
+</script>
+
 </body>
 </html>
+```
+
