@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⚠️ SYSTEM CRITICAL ⚠️</title>
+<title>⚠ SYSTEM CRITICAL ⚠</title>
 
 <style>
 *{box-sizing:border-box}
@@ -14,145 +14,249 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#000;
+    background:#050505;
     font-family:"Courier New",monospace;
 }
 
-#stage{
+#desktop{
     position:fixed;
     inset:0;
     overflow:hidden;
+    background:
+        radial-gradient(circle at center,#180000 0,#050505 55%,#000 100%);
 }
 
-.popup{
+.window{
     position:absolute;
-    width:320px;
+    width:310px;
     min-height:145px;
-    padding:8px;
+    color:#ff2222;
     background:#050505;
-    color:#ff0000;
-    border:3px double #ff0000;
-    box-shadow:0 0 22px #ff0000;
-    font-weight:bold;
-    font-size:14px;
-    will-change:transform;
-    animation:flash .18s infinite alternate;
+    border:2px solid #ff0000;
+    box-shadow:0 0 18px #ff0000;
+    user-select:none;
+    will-change:transform,opacity;
 }
 
-.title{
-    background:#f00;
-    color:#000;
-    padding:3px 6px;
-    font-size:11px;
-    letter-spacing:1px;
-    margin-bottom:10px;
+.window.flash{
+    animation:glitch .13s infinite alternate;
 }
 
-@keyframes flash{
+@keyframes glitch{
     from{
         filter:brightness(1);
-        box-shadow:0 0 18px #f00;
+        box-shadow:0 0 15px #f00;
     }
     to{
-        filter:brightness(1.8);
-        box-shadow:0 0 42px #f00;
+        filter:brightness(2);
+        box-shadow:0 0 40px #f00;
     }
+}
+
+.titlebar{
+    height:27px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 7px;
+    color:#000;
+    background:#f00;
+    font:bold 12px Arial,sans-serif;
+    cursor:grab;
+}
+
+.titlebar:active{
+    cursor:grabbing;
+}
+
+.buttons{
+    display:flex;
+    gap:4px;
+}
+
+.winbtn{
+    width:14px;
+    height:14px;
+    background:#000;
+    color:#f00;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:9px;
+}
+
+.content{
+    padding:14px;
+    line-height:1.5;
+    font-size:13px;
+}
+
+.status{
+    margin-top:12px;
+    color:#ff5555;
+    font-size:11px;
+}
+
+#counter{
+    position:fixed;
+    z-index:999999;
+    left:10px;
+    bottom:10px;
+    padding:7px 10px;
+    background:#000;
+    color:#f00;
+    border:1px solid #f00;
+    font:bold 12px Arial;
 }
 </style>
 </head>
 
 <body>
 
-<div id="stage"></div>
+<div id="desktop"></div>
+<div id="counter">WINDOWS: 0</div>
 
 <script>
-const stage=document.getElementById("stage");
+const desktop=document.getElementById("desktop");
+const counter=document.getElementById("counter");
 
 const messages=[
     "SYSTEM CORRUPTION DETECTED",
     "MANDELA.EXE HAS TAKEN CONTROL",
-    "DO NOT LOOK BEHIND YOU",
-    "YOUR FILES ARE NO LONGER YOURS",
     "SYSTEM FAILURE IMMINENT",
     "CRITICAL_ERROR: VOID_DETECTED",
-    "THERE IS NOT ENOUGH ROOM FOR BOTH OF US",
-    "AN UNKNOWN ENTITY IS TRACKING YOUR PATH"
+    "UNKNOWN PROCESS DETECTED",
+    "SECURITY WARNING",
+    "UNAUTHORIZED ACTIVITY DETECTED",
+    "SYSTEM INTEGRITY FAILURE"
 ];
 
-const popups=[];
-const MAX_POPUPS=30;
+const windows=[];
+const MAX_WINDOWS=25;
 
-function spawn(){
-    if(popups.length>=MAX_POPUPS)return;
+function randomMessage(){
+    return messages[Math.floor(Math.random()*messages.length)];
+}
 
-    const box=document.createElement("div");
-    box.className="popup";
+function spawnWindow(){
+    if(windows.length>=MAX_WINDOWS)return;
 
-    box.innerHTML=
-        '<div class="title">✖ CRITICAL ERROR</div>'+
-        '<div>'+messages[Math.floor(Math.random()*messages.length)]+'</div>';
+    const el=document.createElement("div");
+    el.className="window flash";
 
-    stage.appendChild(box);
+    el.innerHTML=`
+        <div class="titlebar">
+            <span>⚠ CRITICAL ERROR</span>
+            <div class="buttons">
+                <div class="winbtn">—</div>
+                <div class="winbtn">□</div>
+                <div class="winbtn">×</div>
+            </div>
+        </div>
 
-    const maxX=Math.max(0,innerWidth-320);
-    const maxY=Math.max(0,innerHeight-145);
+        <div class="content">
+            ${randomMessage()}
+            <div class="status">STATUS: UNSTABLE</div>
+        </div>
+    `;
+
+    desktop.appendChild(el);
+
+    const w=el.offsetWidth;
+    const h=el.offsetHeight;
 
     const obj={
-        el:box,
-        x:Math.random()*maxX,
-        y:Math.random()*maxY,
-        vx:(Math.random()*3+2)*(Math.random()<.5?-1:1),
-        vy:(Math.random()*3+2)*(Math.random()<.5?-1:1)
+        el,
+        x:Math.random()*Math.max(1,innerWidth-w),
+        y:Math.random()*Math.max(1,innerHeight-h),
+        vx:(2+Math.random()*4)*(Math.random()<.5?-1:1),
+        vy:(2+Math.random()*4)*(Math.random()<.5?-1:1),
+        visible:true
     };
 
-    popups.push(obj);
+    windows.push(obj);
+    updateCounter();
+
+    /* Randomly disappear and reappear */
+    setTimeout(function cycle(){
+        if(!obj.el.isConnected)return;
+
+        obj.visible=false;
+        obj.el.style.opacity="0";
+
+        setTimeout(()=>{
+            obj.visible=true;
+            obj.el.style.opacity="1";
+
+            obj.el.querySelector(".content").firstChild.textContent=
+                "\n            "+randomMessage()+"\n            ";
+
+            setTimeout(cycle,1500+Math.random()*4000);
+        },500+Math.random()*1500);
+    },2500+Math.random()*5000);
+}
+
+function updateCounter(){
+    counter.textContent="WINDOWS: "+windows.length;
 }
 
 function animate(){
-    for(const p of popups){
-        const maxX=innerWidth-p.el.offsetWidth;
-        const maxY=innerHeight-p.el.offsetHeight;
+    for(const w of windows){
+        if(!w.visible)continue;
 
-        p.x+=p.vx;
-        p.y+=p.vy;
+        const maxX=Math.max(0,innerWidth-w.el.offsetWidth);
+        const maxY=Math.max(0,innerHeight-w.el.offsetHeight);
 
-        if(p.x<=0||p.x>=maxX){
-            p.vx*=-1;
-            p.x=Math.max(0,Math.min(p.x,maxX));
+        w.x+=w.vx;
+        w.y+=w.vy;
+
+        if(w.x<=0 || w.x>=maxX){
+            w.vx*=-1;
+            w.x=Math.max(0,Math.min(w.x,maxX));
         }
 
-        if(p.y<=0||p.y>=maxY){
-            p.vy*=-1;
-            p.y=Math.max(0,Math.min(p.y,maxY));
+        if(w.y<=0 || w.y>=maxY){
+            w.vy*=-1;
+            w.y=Math.max(0,Math.min(w.y,maxY));
         }
 
-        p.el.style.transform=
-            `translate3d(${p.x}px,${p.y}px,0)`;
+        w.el.style.transform=
+            `translate3d(${w.x}px,${w.y}px,0)`;
     }
 
     requestAnimationFrame(animate);
 }
 
-/* Initial group */
-for(let i=0;i<6;i++)spawn();
+/* Start with a few windows */
+for(let i=0;i<5;i++){
+    spawnWindow();
+}
 
-/* Keep spawning until the safe visual limit */
+/* Gradually spawn more */
 const spawner=setInterval(()=>{
-    spawn();
-
-    if(popups.length>=MAX_POPUPS){
+    if(windows.length<MAX_WINDOWS){
+        spawnWindow();
+    }else{
         clearInterval(spawner);
     }
-},450);
+},650);
 
-animate();
-
+/* Keep everything inside the viewport */
 window.addEventListener("resize",()=>{
-    for(const p of popups){
-        p.x=Math.min(p.x,Math.max(0,innerWidth-p.el.offsetWidth));
-        p.y=Math.min(p.y,Math.max(0,innerHeight-p.el.offsetHeight));
+    for(const w of windows){
+        w.x=Math.min(
+            w.x,
+            Math.max(0,innerWidth-w.el.offsetWidth)
+        );
+
+        w.y=Math.min(
+            w.y,
+            Math.max(0,innerHeight-w.el.offsetHeight)
+        );
     }
 });
+
+animate();
 </script>
 
 </body>
