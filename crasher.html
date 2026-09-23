@@ -1,73 +1,152 @@
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>System Diagnostic</title>
-
+<title>Popup Launcher</title>
 <style>
 html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    color:#f00;
-    font-family:"Courier New",monospace;
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  color:#f00;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
 }
-
+#ui{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+}
+button{
+  padding:12px 25px;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
 #status{
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    gap:12px;
-}
-
-#bar{
-    width:300px;
-    height:8px;
-    border:1px solid #f00;
-}
-
-#fill{
-    height:100%;
-    width:0;
-    background:#f00;
+  font-family:"Courier New",monospace;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<div id="status">
-    <div>INITIALIZING SYSTEM...</div>
-    <div id="bar"><div id="fill"></div></div>
+<div id="ui">
+  <button onclick="start()">START</button>
+  <div id="status">Ready.</div>
 </div>
 
 <script>
-const fill=document.getElementById("fill");
+const MAX_POPUPS = 5;
+let popups = [];
 
-let progress=0;
+function start(){
+  closePopups();
 
-const loading=setInterval(()=>{
-    progress+=5;
-    fill.style.width=progress+"%";
+  let blocked = false;
 
-    if(progress>=100){
-        clearInterval(loading);
+  for(let i=0;i<MAX_POPUPS;i++){
+    const w = window.open(
+      "",
+      "",
+      "width=300,height=160,resizable=no"
+    );
 
-        /*
-         * Start the visual simulation.
-         * It stays in this browser tab and does not
-         * create uncontrolled real browser windows.
-         */
-        location.href="notifacations.html";
+    if(!w){
+      blocked = true;
+      continue;
     }
-},100);
+
+    popups.push(w);
+
+    w.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>⚠ SYSTEM</title>
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050505;
+  color:red;
+  font-family:Arial;
+}
+.box{
+  height:100%;
+  border:3px solid red;
+  box-sizing:border-box;
+  box-shadow:0 0 18px red;
+}
+.bar{
+  background:red;
+  color:black;
+  padding:7px;
+  font-weight:bold;
+}
+.msg{
+  padding:20px;
+  font:bold 15px "Courier New";
+}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="bar">⚠ CRITICAL ERROR</div>
+  <div class="msg">SYSTEM FAILURE DETECTED</div>
+</div>
+
+<script>
+let x=20,y=20;
+let vx=4,vy=3;
+
+function move(){
+  const maxX=screen.availWidth-300;
+  const maxY=screen.availHeight-160;
+
+  x+=vx;
+  y+=vy;
+
+  if(x<=0 || x>=maxX) vx=-vx;
+  if(y<=0 || y>=maxY) vy=-vy;
+
+  try{
+    moveTo(x,y);
+  }catch(e){}
+
+  requestAnimationFrame(move);
+}
+
+move();
+<\/script>
+</body>
+</html>
+`);
+
+    w.document.close();
+  }
+
+  document.getElementById("status").textContent =
+    blocked
+      ? "⚠ POPUPS BLOCKED — allow popups for this site, then press START again."
+      : "✓ POPUPS OPEN";
+}
+
+function closePopups(){
+  for(const w of popups){
+    try{ w.close(); }catch(e){}
+  }
+  popups=[];
+}
 </script>
 
 </body>
