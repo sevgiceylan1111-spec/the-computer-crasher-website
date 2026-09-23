@@ -1,262 +1,81 @@
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⚠ SYSTEM CRITICAL ⚠</title>
-
+<title>Spawn</title>
 <style>
-*{box-sizing:border-box}
-
 html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#050505;
-    font-family:"Courier New",monospace;
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
 }
 
-#desktop{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    background:
-        radial-gradient(circle at center,#180000 0,#050505 55%,#000 100%);
-}
-
-.window{
-    position:absolute;
-    width:310px;
-    min-height:145px;
-    color:#ff2222;
-    background:#050505;
-    border:2px solid #ff0000;
-    box-shadow:0 0 18px #ff0000;
-    user-select:none;
-    will-change:transform,opacity;
-}
-
-.window.flash{
-    animation:glitch .13s infinite alternate;
-}
-
-@keyframes glitch{
-    from{
-        filter:brightness(1);
-        box-shadow:0 0 15px #f00;
-    }
-    to{
-        filter:brightness(2);
-        box-shadow:0 0 40px #f00;
-    }
-}
-
-.titlebar{
-    height:27px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 7px;
-    color:#000;
-    background:#f00;
-    font:bold 12px Arial,sans-serif;
-    cursor:grab;
-}
-
-.titlebar:active{
-    cursor:grabbing;
-}
-
-.buttons{
-    display:flex;
-    gap:4px;
-}
-
-.winbtn{
-    width:14px;
-    height:14px;
-    background:#000;
-    color:#f00;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:9px;
-}
-
-.content{
-    padding:14px;
-    line-height:1.5;
-    font-size:13px;
-}
-
-.status{
-    margin-top:12px;
-    color:#ff5555;
-    font-size:11px;
-}
-
-#counter{
-    position:fixed;
-    z-index:999999;
-    left:10px;
-    bottom:10px;
-    padding:7px 10px;
-    background:#000;
-    color:#f00;
-    border:1px solid #f00;
-    font:bold 12px Arial;
+.box{
+  position:absolute;
+  width:140px;
+  height:55px;
+  background:#080808;
+  border:2px solid red;
+  color:red;
+  font:bold 13px Arial;
+  box-shadow:0 0 12px red;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  will-change:transform;
 }
 </style>
 </head>
 
 <body>
 
-<div id="desktop"></div>
-<div id="counter">WINDOWS: 0</div>
-
 <script>
-const desktop=document.getElementById("desktop");
-const counter=document.getElementById("counter");
+const boxes=[];
+const MAX=20;
 
-const messages=[
-    "SYSTEM CORRUPTION DETECTED",
-    "MANDELA.EXE HAS TAKEN CONTROL",
-    "SYSTEM FAILURE IMMINENT",
-    "CRITICAL_ERROR: VOID_DETECTED",
-    "UNKNOWN PROCESS DETECTED",
-    "SECURITY WARNING",
-    "UNAUTHORIZED ACTIVITY DETECTED",
-    "SYSTEM INTEGRITY FAILURE"
-];
+function spawn(){
+  if(boxes.length>=MAX)return;
 
-const windows=[];
-const MAX_WINDOWS=25;
+  const el=document.createElement("div");
+  el.className="box";
+  el.textContent="⚠ CRITICAL ERROR";
+  document.body.appendChild(el);
 
-function randomMessage(){
-    return messages[Math.floor(Math.random()*messages.length)];
+  boxes.push({
+    el,
+    x:Math.random()*(innerWidth-144),
+    y:Math.random()*(innerHeight-59),
+    vx:(Math.random()*4+2)*(Math.random()<.5?-1:1),
+    vy:(Math.random()*4+2)*(Math.random()<.5?-1:1)
+  });
 }
 
-function spawnWindow(){
-    if(windows.length>=MAX_WINDOWS)return;
+function move(){
+  for(const b of boxes){
+    b.x+=b.vx;
+    b.y+=b.vy;
 
-    const el=document.createElement("div");
-    el.className="window flash";
+    if(b.x<=0 || b.x+144>=innerWidth)
+      b.vx*=-1;
 
-    el.innerHTML=`
-        <div class="titlebar">
-            <span>⚠ CRITICAL ERROR</span>
-            <div class="buttons">
-                <div class="winbtn">—</div>
-                <div class="winbtn">□</div>
-                <div class="winbtn">×</div>
-            </div>
-        </div>
+    if(b.y<=0 || b.y+59>=innerHeight)
+      b.vy*=-1;
 
-        <div class="content">
-            ${randomMessage()}
-            <div class="status">STATUS: UNSTABLE</div>
-        </div>
-    `;
+    b.el.style.transform=
+      `translate(${b.x}px,${b.y}px)`;
+  }
 
-    desktop.appendChild(el);
-
-    const w=el.offsetWidth;
-    const h=el.offsetHeight;
-
-    const obj={
-        el,
-        x:Math.random()*Math.max(1,innerWidth-w),
-        y:Math.random()*Math.max(1,innerHeight-h),
-        vx:(2+Math.random()*4)*(Math.random()<.5?-1:1),
-        vy:(2+Math.random()*4)*(Math.random()<.5?-1:1),
-        visible:true
-    };
-
-    windows.push(obj);
-    updateCounter();
-
-    /* Randomly disappear and reappear */
-    setTimeout(function cycle(){
-        if(!obj.el.isConnected)return;
-
-        obj.visible=false;
-        obj.el.style.opacity="0";
-
-        setTimeout(()=>{
-            obj.visible=true;
-            obj.el.style.opacity="1";
-
-            obj.el.querySelector(".content").firstChild.textContent=
-                "\n            "+randomMessage()+"\n            ";
-
-            setTimeout(cycle,1500+Math.random()*4000);
-        },500+Math.random()*1500);
-    },2500+Math.random()*5000);
+  requestAnimationFrame(move);
 }
 
-function updateCounter(){
-    counter.textContent="WINDOWS: "+windows.length;
-}
+/* Spawn one every 400ms */
+setInterval(spawn,400);
 
-function animate(){
-    for(const w of windows){
-        if(!w.visible)continue;
-
-        const maxX=Math.max(0,innerWidth-w.el.offsetWidth);
-        const maxY=Math.max(0,innerHeight-w.el.offsetHeight);
-
-        w.x+=w.vx;
-        w.y+=w.vy;
-
-        if(w.x<=0 || w.x>=maxX){
-            w.vx*=-1;
-            w.x=Math.max(0,Math.min(w.x,maxX));
-        }
-
-        if(w.y<=0 || w.y>=maxY){
-            w.vy*=-1;
-            w.y=Math.max(0,Math.min(w.y,maxY));
-        }
-
-        w.el.style.transform=
-            `translate3d(${w.x}px,${w.y}px,0)`;
-    }
-
-    requestAnimationFrame(animate);
-}
-
-/* Start with a few windows */
-for(let i=0;i<5;i++){
-    spawnWindow();
-}
-
-/* Gradually spawn more */
-const spawner=setInterval(()=>{
-    if(windows.length<MAX_WINDOWS){
-        spawnWindow();
-    }else{
-        clearInterval(spawner);
-    }
-},650);
-
-/* Keep everything inside the viewport */
-window.addEventListener("resize",()=>{
-    for(const w of windows){
-        w.x=Math.min(
-            w.x,
-            Math.max(0,innerWidth-w.el.offsetWidth)
-        );
-
-        w.y=Math.min(
-            w.y,
-            Math.max(0,innerHeight-w.el.offsetHeight)
-        );
-    }
-});
-
-animate();
+spawn();
+move();
 </script>
 
 </body>
