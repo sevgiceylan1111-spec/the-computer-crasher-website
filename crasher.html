@@ -88,16 +88,23 @@
 let popups = [];
 let multiplicationTimer = null;
 
-// Dynamically construct absolute target URL to prevent "File Not Found" errors
-const targetUrl = new URL("notifacations.html", window.location.href).href;
+// Get the exact directory path of current crasher.html page
+function getTargetUrl() {
+  const loc = window.location.href;
+  const dir = loc.substring(0, loc.lastIndexOf('/')) + '/';
+  return dir + "notifacations.html";
+}
 
 function spawnSinglePopup() {
   const startX = Math.floor(Math.random() * (screen.availWidth - 300));
   const startY = Math.floor(Math.random() * (screen.availHeight - 160));
 
+  const target = getTargetUrl();
+
+  // Opens target URL directly in the new popup window
   const w = window.open(
-    targetUrl,
-    `popup_${Date.now()}_${Math.random()}`,
+    target,
+    "_blank",
     `width=300,height=160,left=${startX},top=${startY},resizable=no`
   );
 
@@ -105,7 +112,7 @@ function spawnSinglePopup() {
 
   popups.push(w);
 
-  // Fast bouncing speeds (20-35 px per frame)
+  // Velocity parameters
   const speedX = 20 + Math.floor(Math.random() * 15);
   const speedY = 20 + Math.floor(Math.random() * 15);
   let vx = (Math.random() > 0.5 ? 1 : -1) * speedX;
@@ -176,7 +183,7 @@ function updateStatus(blocked = false) {
   if (blocked) {
     statusEl.textContent = "⚠ POPUPS BLOCKED — Allow popups for this site in your browser.";
   } else {
-    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Target: ${targetUrl})`;
+    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Target: ${getTargetUrl()})`;
   }
 }
 
