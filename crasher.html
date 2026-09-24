@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Popup Launcher Matrix</title>
+<title>Infinite Popup Matrix</title>
 <style>
   * {
     box-sizing: border-box;
@@ -76,141 +76,114 @@
 <body>
 
 <div id="ui">
-  <h1>SYSTEM POPUP LAUNCHER</h1>
+  <h1>INFINITE POPUP LAUNCHER</h1>
   <div class="controls">
-    <button onclick="start()">START LAUNCHER</button>
+    <button onclick="start()">START INFINITE</button>
     <button class="secondary" onclick="closePopups()">STOP & CLOSE</button>
   </div>
   <div id="status">Status: Ready.</div>
 </div>
 
 <script>
-const MAX_POPUPS = 5;
 let popups = [];
+let multiplicationTimer = null;
+
+function spawnSinglePopup() {
+  const startX = Math.floor(Math.random() * (screen.availWidth - 300));
+  const startY = Math.floor(Math.random() * (screen.availHeight - 160));
+
+  // Opens notifacations.html directly in the popup
+  const w = window.open(
+    "notifacations.html",
+    `popup_${Date.now()}_${Math.random()}`,
+    `width=300,height=160,left=${startX},top=${startY},resizable=no`
+  );
+
+  if (!w) return null;
+
+  popups.push(w);
+
+  // Fast bouncing speeds (20-35 px per frame)
+  const speedX = 20 + Math.floor(Math.random() * 15);
+  const speedY = 20 + Math.floor(Math.random() * 15);
+  let vx = (Math.random() > 0.5 ? 1 : -1) * speedX;
+  let vy = (Math.random() > 0.5 ? 1 : -1) * speedY;
+  let x = startX;
+  let y = startY;
+
+  // Handles moving the popup window around the screen
+  function moveWindow() {
+    if (w.closed) return;
+
+    const winWidth = w.outerWidth || 300;
+    const winHeight = w.outerHeight || 160;
+    const maxX = screen.availWidth - winWidth;
+    const maxY = screen.availHeight - winHeight;
+
+    x += vx;
+    y += vy;
+
+    if (x <= 0 || x >= maxX) {
+      vx = -vx;
+      x = Math.max(0, Math.min(x, maxX));
+    }
+    if (y <= 0 || y >= maxY) {
+      vy = -vy;
+      y = Math.max(0, Math.min(y, maxY));
+    }
+
+    try {
+      w.moveTo(x, y);
+    } catch(e) {}
+
+    setTimeout(moveWindow, 16);
+  }
+
+  moveWindow();
+  return w;
+}
+
+function scheduleNextMultiplication() {
+  const delay = 100 + Math.random() * 400;
+
+  multiplicationTimer = setTimeout(() => {
+    popups = popups.filter(w => w && !w.closed);
+    
+    spawnSinglePopup();
+    spawnSinglePopup();
+    
+    updateStatus();
+    scheduleNextMultiplication();
+  }, delay);
+}
 
 function start() {
   closePopups();
 
-  let blocked = false;
-
-  for (let i = 0; i < MAX_POPUPS; i++) {
-    // Generate randomized initial velocities and positions
-    const vx = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.floor(Math.random() * 4));
-    const vy = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.floor(Math.random() * 4));
-    const startX = 50 + i * 40;
-    const startY = 50 + i * 40;
-
-    const w = window.open(
-      "",
-      `popup_${i}_${Date.now()}`,
-      `width=320,height=180,left=${startX},top=${startY},resizable=no`
-    );
-
-    if (!w) {
-      blocked = true;
-      continue;
-    }
-
-    popups.push(w);
-
-    w.document.write(`
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>⚠ SYSTEM ALERT #${i + 1}</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #080000;
-    color: #ff2222;
-    font-family: Arial, sans-serif;
-    user-select: none;
-  }
-  .box {
-    height: 100vh;
-    border: 3px solid #ff0000;
-    box-sizing: border-box;
-    box-shadow: inset 0 0 15px #ff0000;
-    display: flex;
-    flex-direction: column;
-  }
-  .bar {
-    background: #ff0000;
-    color: #000;
-    padding: 6px 10px;
-    font-weight: bold;
-    font-size: 13px;
-    letter-spacing: 1px;
-  }
-  .msg {
-    padding: 16px;
-    font: bold 14px "Courier New", monospace;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-  }
-</style>
-</head>
-<body>
-<div class="box">
-  <div class="bar">⚠ CRITICAL WARNING #${i + 1}</div>
-  <div class="msg">SYSTEM THREAT DETECTED</div>
-</div>
-
-<script>
-let x = ${startX};
-let y = ${startY};
-let vx = ${vx};
-let vy = ${vy};
-
-function move() {
-  const winWidth = window.outerWidth || 320;
-  const winHeight = window.outerHeight || 180;
-  
-  const maxX = screen.availWidth - winWidth;
-  const maxY = screen.availHeight - winHeight;
-
-  x += vx;
-  y += vy;
-
-  if (x <= 0 || x >= maxX) {
-    vx = -vx;
-    x = Math.max(0, Math.min(x, maxX));
-  }
-  if (y <= 0 || y >= maxY) {
-    vy = -vy;
-    y = Math.max(0, Math.min(y, maxY));
+  const w = spawnSinglePopup();
+  if (!w) {
+    updateStatus(true);
+    return;
   }
 
-  try {
-    window.moveTo(x, y);
-  } catch(e) {}
-
-  requestAnimationFrame(move);
+  scheduleNextMultiplication();
+  updateStatus();
 }
 
-move();
-<\/script>
-</body>
-</html>
-    `);
-
-    w.document.close();
+function updateStatus(blocked = false) {
+  const statusEl = document.getElementById("status");
+  if (blocked) {
+    statusEl.textContent = "⚠ POPUPS BLOCKED — Allow popups for this site in your browser.";
+  } else {
+    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Opening notifacations.html)`;
   }
-
-  document.getElementById("status").textContent = blocked
-    ? "⚠ SOME POPUPS WERE BLOCKED — Please allow popups for this site in your browser settings."
-    : `✓ SUCCESS: Launched ${popups.length} active floating window(s).`;
 }
 
 function closePopups() {
+  if (multiplicationTimer) {
+    clearTimeout(multiplicationTimer);
+    multiplicationTimer = null;
+  }
   for (const w of popups) {
     try {
       if (w && !w.closed) {
@@ -219,7 +192,7 @@ function closePopups() {
     } catch(e) {}
   }
   popups = [];
-  document.getElementById("status").textContent = "Status: Popups closed.";
+  document.getElementById("status").textContent = "Status: Stopped.";
 }
 </script>
 
