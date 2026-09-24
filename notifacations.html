@@ -3,126 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Infinite Popup Matrix</title>
+<title>⚠ CRITICAL ALERT</title>
 <style>
   * {
     box-sizing: border-box;
-  }
-  html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    color: #ff3333;
-    font-family: 'Courier New', Courier, monospace;
-    overflow: hidden;
-  }
-  #ui {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    background: radial-gradient(circle, #1a0000 0%, #000 80%);
-  }
-  h1 {
-    margin: 0 0 10px 0;
-    font-size: 24px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px #ff0000;
-  }
-  .controls {
-    display: flex;
-    gap: 12px;
-  }
-  button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: inherit;
-    color: #000;
-    background: #ff3333;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
-    transition: all 0.2s ease;
-  }
-  button:hover {
-    background: #ff6666;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-    transform: scale(1.05);
-  }
-  button.secondary {
-    background: #333;
-    color: #ff3333;
-    border: 1px solid #ff3333;
-    box-shadow: none;
-  }
-  button.secondary:hover {
-    background: #ff3333;
-    color: #000;
-  }
-  #status {
-    font-size: 14px;
-    text-align: center;
-    max-width: 80%;
-    line-height: 1.4;
-  }
-</style>
-</head>
-<body>
-
-<div id="ui">
-  <h1>INFINITE POPUP LAUNCHER</h1>
-  <div class="controls">
-    <button onclick="start()">START INFINITE</button>
-    <button class="secondary" onclick="closePopups()">STOP & CLOSE</button>
-  </div>
-  <div id="status">Status: Ready.</div>
-</div>
-
-<script>
-let popups = [];
-let multiplicationTimer = null;
-
-function spawnSinglePopup() {
-  // Fast bouncing speeds (20-35 px per frame)
-  const speedX = 20 + Math.floor(Math.random() * 15);
-  const speedY = 20 + Math.floor(Math.random() * 15);
-  const vx = (Math.random() > 0.5 ? 1 : -1) * speedX;
-  const vy = (Math.random() > 0.5 ? 1 : -1) * speedY;
-
-  const startX = Math.floor(Math.random() * (screen.availWidth - 300));
-  const startY = Math.floor(Math.random() * (screen.availHeight - 160));
-
-  const w = window.open(
-    "",
-    `popup_${Date.now()}_${Math.random()}`,
-    `width=300,height=160,left=${startX},top=${startY},resizable=no`
-  );
-
-  if (!w) return null;
-
-  popups.push(w);
-
-  w.document.write(`
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>⚠ OVERFLOW</title>
-<style>
-  html, body {
     margin: 0;
     padding: 0;
+  }
+  html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000;
-    color: #ff0000;
+    background: #080000;
+    color: #ff2222;
     font-family: Arial, sans-serif;
     user-select: none;
   }
@@ -137,122 +30,45 @@ function spawnSinglePopup() {
   .bar {
     background: #ff0000;
     color: #000;
-    padding: 5px;
+    padding: 6px 10px;
     font-weight: bold;
     font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
   .msg {
-    padding: 10px;
+    padding: 16px;
     font: bold 14px "Courier New", monospace;
     text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
+    gap: 8px;
+  }
+  .blink {
+    animation: blinker 0.8s linear infinite;
+    color: #ffff00;
+  }
+  @keyframes blinker {
+    50% { opacity: 0; }
   }
 </style>
 </head>
 <body>
+
 <div class="box">
-  <div class="bar">⚠ CRITICAL CRASH THREAT</div>
-  <div class="msg">INFINITE MULTIPLYING...</div>
+  <div class="bar">⚠ SYSTEM NOTIFICATION</div>
+  <div class="msg">
+    <div>CRITICAL ERROR DETECTED</div>
+    <div class="blink">[ PROCESS OVERFLOW ]</div>
+  </div>
 </div>
 
 <script>
-let x = ${startX};
-let y = ${startY};
-let vx = ${vx};
-let vy = ${vy};
-
-function move() {
-  const winWidth = window.outerWidth || 300;
-  const winHeight = window.outerHeight || 160;
-  
-  const maxX = screen.availWidth - winWidth;
-  const maxY = screen.availHeight - winHeight;
-
-  x += vx;
-  y += vy;
-
-  if (x <= 0 || x >= maxX) {
-    vx = -vx;
-    x = Math.max(0, Math.min(x, maxX));
-  }
-  if (y <= 0 || y >= maxY) {
-    vy = -vy;
-    y = Math.max(0, Math.min(y, maxY));
-  }
-
-  try {
-    window.moveTo(x, y);
-  } catch(e) {}
-
-  requestAnimationFrame(move);
-}
-
-move();
-<\/script>
-</body>
-</html>
-  `);
-
-  w.document.close();
-  return w;
-}
-
-function scheduleNextMultiplication() {
-  // Rapid multiplication: delay between 100ms and 500ms
-  const delay = 100 + Math.random() * 400;
-
-  multiplicationTimer = setTimeout(() => {
-    popups = popups.filter(w => w && !w.closed);
-    
-    // Spawns multiple windows per cycle infinitely
-    spawnSinglePopup();
-    spawnSinglePopup();
-    
-    updateStatus();
-    scheduleNextMultiplication();
-  }, delay);
-}
-
-function start() {
-  closePopups();
-
-  const w = spawnSinglePopup();
-  if (!w) {
-    updateStatus(true);
-    return;
-  }
-
-  scheduleNextMultiplication();
-  updateStatus();
-}
-
-function updateStatus(blocked = false) {
-  const statusEl = document.getElementById("status");
-  if (blocked) {
-    statusEl.textContent = "⚠ POPUPS BLOCKED — Allow popups for this site in your browser.";
-  } else {
-    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Infinite Loop Active)`;
-  }
-}
-
-function closePopups() {
-  if (multiplicationTimer) {
-    clearTimeout(multiplicationTimer);
-    multiplicationTimer = null;
-  }
-  for (const w of popups) {
-    try {
-      if (w && !w.closed) {
-        w.close();
-      }
-    } catch(e) {}
-  }
-  popups = [];
-  document.getElementById("status").textContent = "Status: Stopped.";
-}
+// Prevent secondary navigation blocks in Edge
+window.onerror = function() { return true; };
 </script>
 
 </body>
