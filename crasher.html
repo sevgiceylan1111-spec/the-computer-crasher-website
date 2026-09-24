@@ -1,208 +1,237 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Infinite Popup Matrix</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Popup Launcher</title>
+
 <style>
-  * {
-    box-sizing: border-box;
-  }
-  html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    color: #ff3333;
-    font-family: 'Courier New', Courier, monospace;
-    overflow: hidden;
-  }
-  #ui {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    background: radial-gradient(circle, #1a0000 0%, #000 80%);
-  }
-  h1 {
-    margin: 0 0 10px 0;
-    font-size: 24px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px #ff0000;
-  }
-  .controls {
-    display: flex;
-    gap: 12px;
-  }
-  button {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: inherit;
-    color: #000;
-    background: #ff3333;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
-    transition: all 0.2s ease;
-  }
-  button:hover {
-    background: #ff6666;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-    transform: scale(1.05);
-  }
-  button.secondary {
-    background: #333;
-    color: #ff3333;
-    border: 1px solid #ff3333;
-    box-shadow: none;
-  }
-  button.secondary:hover {
-    background: #ff3333;
-    color: #000;
-  }
-  #status {
-    font-size: 14px;
-    text-align: center;
-    max-width: 80%;
-    line-height: 1.4;
-  }
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    color:#ff3333;
+    font-family:"Courier New",monospace;
+}
+
+#ui{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+}
+
+h1{
+    margin:0;
+    font-size:24px;
+    text-shadow:0 0 12px red;
+}
+
+button{
+    padding:12px 24px;
+    background:#f33;
+    color:#000;
+    border:0;
+    border-radius:4px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#stop{
+    background:#222;
+    color:#f33;
+    border:1px solid #f33;
+}
+
+#status{
+    text-align:center;
+    max-width:90%;
+}
 </style>
 </head>
+
 <body>
 
 <div id="ui">
-  <h1>INFINITE POPUP LAUNCHER</h1>
-  <div class="controls">
-    <button onclick="start()">START INFINITE</button>
-    <button class="secondary" onclick="closePopups()">STOP & CLOSE</button>
-  </div>
-  <div id="status">Status: Ready.</div>
+    <h1>POPUP LAUNCHER</h1>
+
+    <div>
+        <button onclick="start()">START</button>
+        <button id="stop" onclick="stop()">STOP & CLOSE</button>
+    </div>
+
+    <div id="status">Status: Ready.</div>
 </div>
 
 <script>
-let popups = [];
-let multiplicationTimer = null;
+const MAX_POPUPS = 8;
+const popups = [];
+let running = false;
 
-// Get the exact directory path of current crasher.html page
-function getTargetUrl() {
-  const loc = window.location.href;
-  const dir = loc.substring(0, loc.lastIndexOf('/')) + '/';
-  return dir + "notifacations.html";
+function popupHTML(){
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+<title>⚠ SYSTEM</title>
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#050505;
+}
+.box{
+    width:100%;
+    height:100%;
+    box-sizing:border-box;
+    border:3px double red;
+    color:red;
+    font-family:"Courier New",monospace;
+    font-weight:bold;
+    box-shadow:0 0 20px red;
+}
+.bar{
+    background:red;
+    color:#000;
+    padding:6px;
+    font:12px Arial;
+}
+.msg{
+    padding:18px;
+}
+</style>
+</head>
+<body>
+<div class="box">
+    <div class="bar">⚠ CRITICAL ERROR</div>
+    <div class="msg">SYSTEM FAILURE DETECTED</div>
+</div>
+</body>
+</html>`;
 }
 
-function spawnSinglePopup() {
-  const startX = Math.floor(Math.random() * (screen.availWidth - 300));
-  const startY = Math.floor(Math.random() * (screen.availHeight - 160));
+function spawn(){
+    if(!running || popups.length >= MAX_POPUPS)
+        return;
 
-  const target = getTargetUrl();
+    const width=300;
+    const height=160;
 
-  // Opens target URL directly in the new popup window
-  const w = window.open(
-    target,
-    "_blank",
-    `width=300,height=160,left=${startX},top=${startY},resizable=no`
-  );
+    const x=Math.floor(
+        Math.random()*Math.max(1,screen.availWidth-width)
+    );
 
-  if (!w) return null;
+    const y=Math.floor(
+        Math.random()*Math.max(1,screen.availHeight-height)
+    );
 
-  popups.push(w);
+    const w=window.open(
+        "",
+        "_blank",
+        `width=${width},height=${height},left=${x},top=${y},resizable=no`
+    );
 
-  // Velocity parameters
-  const speedX = 20 + Math.floor(Math.random() * 15);
-  const speedY = 20 + Math.floor(Math.random() * 15);
-  let vx = (Math.random() > 0.5 ? 1 : -1) * speedX;
-  let vy = (Math.random() > 0.5 ? 1 : -1) * speedY;
-  let x = startX;
-  let y = startY;
-
-  function moveWindow() {
-    if (w.closed) return;
-
-    const winWidth = w.outerWidth || 300;
-    const winHeight = w.outerHeight || 160;
-    const maxX = screen.availWidth - winWidth;
-    const maxY = screen.availHeight - winHeight;
-
-    x += vx;
-    y += vy;
-
-    if (x <= 0 || x >= maxX) {
-      vx = -vx;
-      x = Math.max(0, Math.min(x, maxX));
+    if(!w){
+        running=false;
+        document.getElementById("status").textContent =
+            "⚠ POPUPS BLOCKED — allow popups for this site, then press START again.";
+        return;
     }
-    if (y <= 0 || y >= maxY) {
-      vy = -vy;
-      y = Math.max(0, Math.min(y, maxY));
+
+    w.document.write(popupHTML());
+    w.document.close();
+
+    const obj={
+        w:w,
+        x:x,
+        y:y,
+        vx:(3+Math.random()*4)*(Math.random()<.5?-1:1),
+        vy:(3+Math.random()*4)*(Math.random()<.5?-1:1)
+    };
+
+    popups.push(obj);
+
+    document.getElementById("status").textContent =
+        `✓ POPUPS OPEN: ${popups.length}/${MAX_POPUPS}`;
+
+    bounce(obj);
+}
+
+function bounce(p){
+    if(!p.w || p.w.closed)
+        return;
+
+    const maxX=Math.max(0,screen.availWidth-(p.w.outerWidth||300));
+    const maxY=Math.max(0,screen.availHeight-(p.w.outerHeight||160));
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<=0 || p.x>=maxX){
+        p.vx*=-1;
+        p.x=Math.max(0,Math.min(p.x,maxX));
     }
 
-    try {
-      w.moveTo(x, y);
-    } catch(e) {}
+    if(p.y<=0 || p.y>=maxY){
+        p.vy*=-1;
+        p.y=Math.max(0,Math.min(p.y,maxY));
+    }
 
-    setTimeout(moveWindow, 16);
-  }
+    try{
+        p.w.moveTo(Math.round(p.x),Math.round(p.y));
+    }catch(e){}
 
-  moveWindow();
-  return w;
+    setTimeout(()=>bounce(p),30);
 }
 
-function scheduleNextMultiplication() {
-  const delay = 100 + Math.random() * 400;
+function start(){
+    stop(false);
+    running=true;
 
-  multiplicationTimer = setTimeout(() => {
-    popups = popups.filter(w => w && !w.closed);
-    
-    spawnSinglePopup();
-    spawnSinglePopup();
-    
-    updateStatus();
-    scheduleNextMultiplication();
-  }, delay);
+    /* First popup is directly caused by the button click. */
+    spawn();
+
+    /* Additional popups appear gradually. */
+    let created=1;
+
+    const timer=setInterval(()=>{
+        if(!running || created>=MAX_POPUPS){
+            clearInterval(timer);
+            return;
+        }
+
+        spawn();
+        created++;
+    },700);
 }
 
-function start() {
-  closePopups();
+function stop(update=true){
+    running=false;
 
-  const w = spawnSinglePopup();
-  if (!w) {
-    updateStatus(true);
-    return;
-  }
+    while(popups.length){
+        const p=popups.pop();
 
-  scheduleNextMultiplication();
-  updateStatus();
-}
+        try{
+            if(p.w && !p.w.closed)
+                p.w.close();
+        }catch(e){}
+    }
 
-function updateStatus(blocked = false) {
-  const statusEl = document.getElementById("status");
-  if (blocked) {
-    statusEl.textContent = "⚠ POPUPS BLOCKED — Allow popups for this site in your browser.";
-  } else {
-    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Target: ${getTargetUrl()})`;
-  }
-}
-
-function closePopups() {
-  if (multiplicationTimer) {
-    clearTimeout(multiplicationTimer);
-    multiplicationTimer = null;
-  }
-  for (const w of popups) {
-    try {
-      if (w && !w.closed) {
-        w.close();
-      }
-    } catch(e) {}
-  }
-  popups = [];
-  document.getElementById("status").textContent = "Status: Stopped.";
+    if(update){
+        document.getElementById("status").textContent =
+            "Status: Stopped.";
+    }
 }
 </script>
 
 </body>
 </html>
+```
