@@ -88,13 +88,15 @@
 let popups = [];
 let multiplicationTimer = null;
 
+// Dynamically construct absolute target URL to prevent "File Not Found" errors
+const targetUrl = new URL("notifacations.html", window.location.href).href;
+
 function spawnSinglePopup() {
   const startX = Math.floor(Math.random() * (screen.availWidth - 300));
   const startY = Math.floor(Math.random() * (screen.availHeight - 160));
 
-  // Opens notifacations.html directly in the popup
   const w = window.open(
-    "notifacations.html",
+    targetUrl,
     `popup_${Date.now()}_${Math.random()}`,
     `width=300,height=160,left=${startX},top=${startY},resizable=no`
   );
@@ -111,7 +113,6 @@ function spawnSinglePopup() {
   let x = startX;
   let y = startY;
 
-  // Handles moving the popup window around the screen
   function moveWindow() {
     if (w.closed) return;
 
@@ -175,7 +176,7 @@ function updateStatus(blocked = false) {
   if (blocked) {
     statusEl.textContent = "⚠ POPUPS BLOCKED — Allow popups for this site in your browser.";
   } else {
-    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Opening notifacations.html)`;
+    statusEl.textContent = `✓ ACTIVE POPUPS: ${popups.length} (Target: ${targetUrl})`;
   }
 }
 
