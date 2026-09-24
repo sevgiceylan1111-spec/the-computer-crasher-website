@@ -2,74 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>⚠ SYSTEM ALERT</title>
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #080000;
-    color: #ff2222;
-    font-family: Arial, sans-serif;
+    background: #000;
+    color: #ff0000;
+    font-family: monospace;
     user-select: none;
   }
   .box {
     height: 100vh;
     border: 3px solid #ff0000;
-    box-sizing: border-box;
-    box-shadow: inset 0 0 20px #ff0000;
     display: flex;
     flex-direction: column;
   }
   .bar {
     background: #ff0000;
     color: #000;
-    padding: 6px 10px;
+    padding: 6px;
     font-weight: bold;
     font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
   }
   .msg {
-    padding: 16px;
-    font: bold 14px "Courier New", monospace;
-    text-align: center;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    gap: 8px;
-  }
-  .blink {
-    animation: blinker 0.8s linear infinite;
-    color: #ffff00;
-  }
-  @keyframes blinker {
-    50% { opacity: 0; }
+    font-size: 14px;
+    text-align: center;
   }
 </style>
 </head>
 <body>
-
 <div class="box">
-  <div class="bar">⚠ SYSTEM NOTIFICATION</div>
-  <div class="msg">
-    <div>CRITICAL ERROR DETECTED</div>
-    <div class="blink">[ PROCESS OVERFLOW ]</div>
-  </div>
+  <div class="bar">⚠ NOTIFICATION</div>
+  <div class="msg">CRITICAL SYSTEM EVENT</div>
 </div>
-
-<script>
-// Prevents Edge sub-process crashes
-window.onerror = function() { return true; };
-</script>
-
 </body>
 </html>
